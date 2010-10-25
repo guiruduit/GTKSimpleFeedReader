@@ -7,6 +7,9 @@ class GUIFeedReader(object):
 		self.construct_window()
 		self.window.show_all()
 
+	def main(self):
+		gtk.main()	
+		
 	def construct_window(self):
 		self.window = gtk.Window()
 		self.window.set_title("Feed Reader")
