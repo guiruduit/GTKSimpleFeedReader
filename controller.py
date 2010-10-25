@@ -13,6 +13,7 @@ class FeedReader(object):
 		self.gui.combo_feaders.append_text('Todos')
 		self.gui.combo_feeds.connect('changed', self.select_feed)
 		self.gui.window.show_all()
+		self.gui.main()
 
 	def add_feader(self, button):
 		new_feader = Feader(self.gui.edit_add_feader.get_text())
