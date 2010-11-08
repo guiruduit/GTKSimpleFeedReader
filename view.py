@@ -1,5 +1,29 @@
-import gtk
-# import webkit
+import gtk, webkit
+
+class GUILogin(object):
+
+	def __init__(self):
+		self.construct_window()
+		self.window.show_all()
+
+	def run_gtk(self):
+		gtk.main()
+
+	def construct_window(self):
+		self.window = gtk.Window()
+		self.window.set_title("Login - Feed Reader")
+		self.edit_login = gtk.Entry()
+		label_login = gtk.Label("User: ")
+		self.button_login = gtk.Button("Go to my Feeds")
+
+		hbox = gtk.HBox()
+		hbox.pack_start(label_login, False)
+		hbox.pack_start(self.edit_login, False)
+
+		vbox = gtk.VBox()
+		vbox.pack_start(hbox, False)
+		vbox.pack_start(self.button_login)
+		self.window.add(vbox)
 
 class GUIFeedReader(object):
 
@@ -7,9 +31,9 @@ class GUIFeedReader(object):
 		self.construct_window()
 		self.window.show_all()
 
-	def main(self):
-		gtk.main()	
-		
+	def run_gtk(self):
+		gtk.main()
+
 	def construct_window(self):
 		self.window = gtk.Window()
 		self.window.set_title("Feed Reader")
@@ -19,24 +43,20 @@ class GUIFeedReader(object):
 		self.button_refresh = gtk.Button(stock = gtk.STOCK_REFRESH)
 		self.combo_feaders = gtk.combo_box_new_text()
 		self.combo_feeds = gtk.combo_box_new_text()
-		# self.webview = webkit.WebView()
-		
-		textview = gtk.TextView()
-		self.buffer = textview.get_buffer()
-		
+		self.webview = webkit.WebView()
+
 		hbox = gtk.HBox()
 		hbox.pack_start(self.edit_add_feader)
 		hbox.pack_start(self.button_add)
 		hbox.pack_start(self.button_refresh)
-		
+
 		scrollframe = gtk.ScrolledWindow()
-		# scrollframe.add(self.webview)
-		scrollframe.add(textview)
-		
+		scrollframe.add(self.webview)
+
 		vbox = gtk.VBox()
 		vbox.pack_start(hbox, False)
 		vbox.pack_start(self.combo_feaders, False)
 		vbox.pack_start(self.combo_feeds, False)
 		vbox.pack_start(scrollframe)
-
 		self.window.add(vbox)
+
