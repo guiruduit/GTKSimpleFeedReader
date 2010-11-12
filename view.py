@@ -1,4 +1,5 @@
-import gtk, webkit
+import gtk
+# import webkit
 
 class GUILogin(object):
 
@@ -43,7 +44,7 @@ class GUIFeedReader(object):
 		self.button_refresh = gtk.Button(stock = gtk.STOCK_REFRESH)
 		self.combo_feaders = gtk.combo_box_new_text()
 		self.combo_feeds = gtk.combo_box_new_text()
-		self.webview = webkit.WebView()
+		# self.webview = webkit.WebView()
 
 		hbox = gtk.HBox()
 		hbox.pack_start(self.edit_add_feader)
@@ -51,7 +52,13 @@ class GUIFeedReader(object):
 		hbox.pack_start(self.button_refresh)
 
 		scrollframe = gtk.ScrolledWindow()
-		scrollframe.add(self.webview)
+		# scrollframe.add(self.webview)
+
+		# solution for now:
+		textview = gtk.TextView()
+		self.buffer = textview.get_buffer()
+		scrollframe.add(textview)
+		# -----------------
 
 		vbox = gtk.VBox()
 		vbox.pack_start(hbox, False)
@@ -59,4 +66,3 @@ class GUIFeedReader(object):
 		vbox.pack_start(self.combo_feeds, False)
 		vbox.pack_start(scrollframe)
 		self.window.add(vbox)
-

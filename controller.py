@@ -8,11 +8,13 @@ class FeedReader(object):
 	# For GUILogin window:
 
 	def __init__(self):
+		print "__init__"
 		self.gui_login = GUILogin()
 		self.gui_login.button_login.connect('clicked', self.load_user_urls)
 		self.gui_login.run_gtk()
 
 	def load_user_urls(self, button):
+		print "load_user_urls"
 		self.gui = GUIFeedReader()
 		self.user_file_name = 'GTKSimpleFeedReader/user_files/' + self.gui_login.edit_login.get_text() + '.txt'
 		user_file = open(self.user_file_name, "r")
@@ -23,81 +25,120 @@ class FeedReader(object):
 	# For GUIFeedReader window:
 
 	def start_FeedReader(self):
+		print "start_FeedReader"
 		self.gui.combo_feaders.append_text('Todos')
 		self.connect_FeedReader_events()
 		self.gui.run_gtk()
 
 	def connect_FeedReader_events(self):
-		self.gui.button_add.connect('clicked', self.create_and_add_new_feader)
+		print "connect_FeedReader_events"
+		self.gui.button_add.connect('clicked', self.get_url_to_feader)
 		self.gui.button_refresh.connect('clicked', self.refresh_feeds)
 		self.gui.combo_feaders.connect('changed', self.select_feader)
 		self.gui.combo_feeds.connect('changed', self.select_feed)
 
-	def create_and_add_new_feader(self, button):
+	def get_url_to_feader(self, button):
+		print "get_url_to_feader"
 		url = self.gui.edit_add_feader.get_text()
-		self.clear_edit_add_feader()
-		self.add_feader(url)
-		user_file = open(self.user_file_name, "a")
-		user_file.write(url + '\n')
-		user_file.close()
+		# self.clear_data_from([self.gui.edit_add_feader])
 
-	def clear_edit_add_feader(self):
+		# solution for now:
 		self.gui.edit_add_feader.set_text('')
+		#-----------------
+
+		self.add_feader(url)
+		self.add_feader_url_to_file(url)
 
 	def add_feader(self, url):
+		print "add_feader"
 		new_feader = Feader(url)
 		self.feaders.append(new_feader)
 		self.gui.combo_feaders.append_text(new_feader.title)
 		self.add_feader_feeds(new_feader)
 
+	def add_feader_url_to_file(self, url):
+		print "add_feader_url_to_file"
+		user_file = open(self.user_file_name, "a")
+		user_file.write(url + '\n')
+		user_file.close()
+
 	def add_feader_feeds(self, new_feader):
+		print "add_feader_feeds"
 		self.feeds.extend(new_feader.get_feeds())
 		self.feeds = self.__quicksort(self.feeds)
-		self.__add_all_feeds_to_combo_feeds()
+		self.add_feeds_to_combo_from()
 
 	def __quicksort(self, list_feeds):
-		if len(list_feeds) <= 1:
-			return list_feeds
+		print "__quicksort"
+		if len(list_feeds) <= 1: return list_feeds
 		middle = list_feeds[0].date
 		return self.__quicksort([feed for feed in list_feeds if feed.date > middle]) + \
 			[feed for feed in list_feeds if feed.date == middle] + \
 			self.__quicksort([feed for feed in list_feeds if feed.date < middle])
 
-	def __add_all_feeds_to_combo_feeds(self):
-		self.__clear_combo_feeds()
-		for feed in self.feeds:
-			self.gui.combo_feeds.append_text(feed.title)
+	def add_feeds_to_combo_from(self, feader=None):
+		print "add_feeds_to_combo_from"
 
-	def __add_feader_feeds_to_combo_feeds(self, feader):
-		self.__clear_combo_feeds()
-		list_feeds = feader.get_feeds()
-		for feed in list_feeds:
-			self.gui.combo_feeds.append_text(feed.title)
-
-	def select_feader(self, combobox):
-		if self.gui.combo_feaders.get_active_text() == 'Todos': self.__add_all_feeds_to_combo_feeds()
-		else:
-			feader_selected = [feader for feader in self.feaders if feader.title == self.gui.combo_feaders.get_active_text()]
-			if feader_selected: self.__add_feader_feeds_to_combo_feeds(feader_selected[0])
-			else: print 'error'
-
-	def select_feed(self, combobox):
-		feed_selected = None
-		while not feed_selected:
-			feed_selected = [feed.description for feed in self.feeds if feed.title == self.gui.combo_feeds.get_active_text()]
-			if not feed_selected: feed_selected = ' '
-		self.gui.webview.load_html_string(feed_selected[0], '')
-
-	def clear_feeds(self):
-		self.feeds = []
-		self.__clear_combo_feeds()
-
-	def __clear_combo_feeds(self):
+		# self.clear_data_from([self.gui.combo_feeds.get_model()])
+		# solution for now:
 		model = self.gui.combo_feeds.get_model()
 		model.clear()
+		# -----------------
+
+		if feader == None: feeds_list = self.feeds
+		else: feeds_list = feader.get_feeds()
+		for feed in feeds_list: self.gui.combo_feeds.append_text(feed.title)
+
+	def select_feader(self, combobox):
+		print "select_feader"
+		if self.gui.combo_feaders.get_active_text() == 'Todos': self.add_feeds_to_combo_from()
+		else:
+			feader_selected = [feader for feader in self.feaders if feader.title == self.gui.combo_feaders.get_active_text()]
+			# se retornar vazio a funcao add_feeds_to_combo_from() coloca todos os feeds na combo
+			self.add_feeds_to_combo_from(feader_selected[0])
+
+	def select_feed(self, combobox):
+		print "select_feed"
+		if self.gui.combo_feeds.get_active_text() != '':
+			feed_selected = [feed.description for feed in self.feeds if feed.title == self.gui.combo_feeds.get_active_text()]
+			# self.gui.webview.load_html_string(feed_selected[0], '')
+			self.gui.buffer.set_text(feed_selected[0])
 
 	def refresh_feeds(self, btn):
-		self.clear_feeds()
+		print "refresh_feeds"
+		# self.clear_data_from([self.feeds, self.combo_feeds.get_model()])
+
+		# solution for now:
+		self.feeds = []
+		model = self.gui.combo_feeds.get_model()
+		model.clear()
+		# ----------------
+		
 		for feader in self.feaders:
 			feader.reset()
 			self.feeds.extend(feader.get_feeds())
+
+	def clear_data_from(self, objs):
+		# dict_clear_function = {
+		# 	'list': lambda obj: clear_list(obj),
+		# 	'gtk.Entry': lambda obj: obj.set_text(''),
+		# 	'gtk.combo_box_new_text': lambda obj: obj.clear(),
+		# }
+		# for obj in objs: dict_clear_function.get(type(obj))()
+		# def clear_list(l): l = []
+		print "clear_data_from"
+		print len(objs)
+		for obj in objs:
+			print type(obj)
+			print obj
+			if len(objs) == 1: print "objeto existe"
+			if type(obj) == 'list': obj = []; print "clear lista"
+			elif type(obj) == 'gtk.Entry':
+				obj.set_text('')
+				print "clear gtk.Entry"
+				print obj.get_text()
+			elif type(obj) == 'gtk.ListStore':
+				obj.clear()
+				print "clear gtk.combo"
+				print len(obj)
+			else: "passou sem ser limpo"
