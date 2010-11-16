@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+
 import gtk
 # import webkit
 
@@ -5,6 +8,7 @@ class GUILogin(object):
 
 	def __init__(self):
 		self.construct_window()
+		self.window.connect('destroy', gtk.main_quit)
 		self.window.show_all()
 
 	def run_gtk(self):
@@ -16,6 +20,7 @@ class GUILogin(object):
 		self.edit_login = gtk.Entry()
 		label_login = gtk.Label("User: ")
 		self.button_login = gtk.Button("Go to my Feeds")
+		label_hint = gtk.Label('Se a conta não existir, \nserá automaticamente criada')
 
 		hbox = gtk.HBox()
 		hbox.pack_start(label_login, False)
@@ -24,12 +29,14 @@ class GUILogin(object):
 		vbox = gtk.VBox()
 		vbox.pack_start(hbox, False)
 		vbox.pack_start(self.button_login)
+		vbox.pack_start(label_hint, False)
 		self.window.add(vbox)
 
 class GUIFeedReader(object):
 
 	def __init__(self):
 		self.construct_window()
+		self.window.connect('destroy', gtk.main_quit)
 		self.window.show_all()
 
 	def run_gtk(self):
