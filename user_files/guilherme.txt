@@ -1,1 +1,4 @@
 http://rss.terra.com.br/0,,EI294,00.xml
+http://www.baguete.com.br/rss/noticias/feed
+http://oglobo.globo.com/rss/plantaomundo.xml
+http://www.r7.com/data/rss/internacional.xml

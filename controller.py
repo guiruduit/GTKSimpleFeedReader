@@ -18,7 +18,10 @@ class FeedReader(object):
 
 	def load_user_urls(self, button):
 		self.gui = GUIFeedReader()
-		self.user_file_name = os.getcwd() + '/user_files/' + self.gui_login.edit_login.get_text() + '.txt'
+		try:
+			self.user_file_name = os.getcwd() + '/user_files/' + self.gui_login.edit_login.get_text() + '.txt'
+		except IOError:
+			self.user_file_name = os.getcwd() + '/GTKSimpleFeedReader/user_files/' + self.gui_login.edit_login.get_text() + '.txt'
 		user_file = open(self.user_file_name, "r")
 		user_url_list = user_file.readlines()
 		for url in user_url_list: self.add_feader(url)
@@ -94,8 +97,8 @@ class FeedReader(object):
 	def select_feed(self, combobox):
 		if self.gui.combo_feeds.get_active_text() != '':
 			feed_selected = [feed.description for feed in self.feeds if feed.title == self.gui.combo_feeds.get_active_text()]
-			# self.gui.webview.load_html_string(feed_selected[0], '')
-			self.gui.buffer.set_text(feed_selected[0])
+			self.gui.webview.load_html_string(feed_selected[0], '')
+			# self.gui.buffer.set_text(feed_selected[0])
 
 	def refresh_feeds(self, btn):
 		# self.clear_data_from([self.feeds, self.combo_feeds.get_model()])
