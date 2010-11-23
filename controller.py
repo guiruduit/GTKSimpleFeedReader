@@ -3,6 +3,7 @@
 
 from view import GUIFeedReader, GUILogin
 from model import Feader, Feed
+import os
 
 class FeedReader(object):
 
@@ -17,7 +18,7 @@ class FeedReader(object):
 
 	def load_user_urls(self, button):
 		self.gui = GUIFeedReader()
-		self.user_file_name = 'GTKSimpleFeedReader/user_files/' + self.gui_login.edit_login.get_text() + '.txt'
+		self.user_file_name = os.getcwd() + '/user_files/' + self.gui_login.edit_login.get_text() + '.txt'
 		user_file = open(self.user_file_name, "r")
 		user_url_list = user_file.readlines()
 		for url in user_url_list: self.add_feader(url)
